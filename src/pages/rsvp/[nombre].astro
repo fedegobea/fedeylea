@@ -5,16 +5,16 @@ import Base from "@/layouts/Base.astro";
 
 const showSearch = false;
 
-export const getStaticPaths = (() => {
+// export const getStaticPaths = (() => {
   
-    return [{'params': {'nombre': 'Federico Gobea'}, props:{
-        nombre: 'Federico Gobea',
-        guests: 2
-    }}];
-}) satisfies GetStaticPaths;
+//     return [{'params': {'nombre': 'Federico Gobea'}, props:{
+//         nombre: 'Federico Gobea',
+//         guests: 2
+//     }}];
+// }) satisfies GetStaticPaths;
 
-const {nombre, guests} = Astro.props
-
+const {nombre} = Astro.params
+const guests = 2;
 
 ---
 
