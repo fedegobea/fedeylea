@@ -18,11 +18,25 @@ if (!nombre) {
 }
 const db = getFirestore(app);
 const docRef = await db.collection('guests').doc(nombre).get()
-console.log(import.meta.env)
 const {guests, confirmed, maxGuests} = docRef.data()
 
----
 
+---
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const elem = document.getElementById('guests')
+        console.log(elem)
+        document.addEventListener(
+            "onChangeGuests",
+            (e) => {
+                console.log(elem, e)
+                elem.value = e.detail.guests
+            },
+            false,
+            );
+
+      });
+</script>
 
 
 <Base>
@@ -47,6 +61,7 @@ const {guests, confirmed, maxGuests} = docRef.data()
                     <form method="post" action={`/api/guests/${nombre}`} >
                     <input type="hidden" name="confirmed" value="true" />
                     <input type="hidden" name="maxGuests" value={maxGuests} />
+                    <input type="hidden" id="guests" name="guests" value={guests} />
                     
                         <button  type="submit" class="btn btn-primary">Confirmar</button>
                     </form>

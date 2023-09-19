@@ -9,7 +9,10 @@ export const POST: APIRoute = async ({ params, redirect, request }) => {
   const nombre = params.nombre;
     const formData = await request.formData()
     const confirmed = formData.get('confirmed') === 'true'
-    console.log(formData)
+    const defaultGuests = await (await guestsRef.doc(nombre).get()).data().guests
+    console.log(defaultGuests)
+    const guests = parseInt(formData.get('guests')?.toString() || defaultGuests)
+    console.log(guests)
   if (!nombre) {
     return new Response("No existe invitado", {
       status: 404,
@@ -18,7 +21,8 @@ export const POST: APIRoute = async ({ params, redirect, request }) => {
 
   try {
     await guestsRef.doc(nombre).update({
-     confirmed
+     confirmed,
+     guests
     });
   } catch (error) {
     console.error(error)
