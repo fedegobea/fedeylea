@@ -1,35 +1,57 @@
 ---
 import type { GetStaticPaths } from "astro";
 import Base from "@/layouts/Base.astro";
+import GuestNumber from "@/layouts/components/Guest.jsx";
+import { app } from "../../firebase/server";
+
+import { getFirestore  } from "firebase-admin/firestore";
 
 
-const showSearch = false;
 
-// export const getStaticPaths = (() => {
-  
-//     return [{'params': {'nombre': 'Federico Gobea'}, props:{
-//         nombre: 'Federico Gobea',
-//         guests: 2
-//     }}];
-// }) satisfies GetStaticPaths;
 
 const {nombre} = Astro.params
-const guests = 2;
+if (!nombre) {
+    return {
+        status: 404,
+        error: new Error("No se encontró el invitado"),
+    };
+}
+const db = getFirestore(app);
+const docRef = await db.collection('guests').doc(nombre).get()
+console.log(import.meta.env)
+const {guests, confirmed, maxGuests} = docRef.data()
 
 ---
+
+
 
 <Base>
     <section class="section pt-14">
         <div class="container">
           <div class="row justify-center">
+            {confirmed ?  
+            
             <div class="mb-16 text-center lg:col-7">
+                <h1>Gracias, {nombre} ya confirmaste tu asistencia!</h1>
+                <form method="post" action={`/api/guests/${nombre}`} >
+                    <input type="hidden" name="confirmed" value="false" />
+                    <button  type="submit" class="btn btn-primary">Desconfirmar</button>
+                </form>
+                </div>
+            :<div class="mb-16 text-center lg:col-7">
                 <h1>Confirma tu asistencía</h1>
                <h2>{nombre} </h2>
-               <h4>Cupos {guests}</h4>
+               <GuestNumber maxGuests={maxGuests} guests={guests} client:load/>
+               
                <div class="col-span-full mt-5">
-                   <button type="button" class="btn btn-primary">Confirmar</button>
+                    <form method="post" action={`/api/guests/${nombre}`} >
+                    <input type="hidden" name="confirmed" value="true" />
+                    <input type="hidden" name="maxGuests" value={maxGuests} />
+                    
+                        <button  type="submit" class="btn btn-primary">Confirmar</button>
+                    </form>
                  </div>
-            </div>
+            </div>}
         </div>
     </div>
     </section>
