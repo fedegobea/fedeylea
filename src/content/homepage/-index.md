@@ -6,13 +6,13 @@ banner:
   image: "/images/banner.png"
   button:
     enable: true
-    label: "Ver en un mapa"
-    link: "/rsvp"
+    label: "Como llegar"
+    link: "https://maps.app.goo.gl/TvGsjAxgquRjwuaX8"
 
 # Features
 features:
   - title: "Bienvenidos a nuestro matrimonio"
-    image: "/images/service-1.png"
+    image: "/images/fedeylea.jpg"
     content: "Nos hace infinitamente felices compartir éste momento especial con ustedes, que han hecho parte fundamental de nuestra historia de vida.
 <br/>
 <br/>
