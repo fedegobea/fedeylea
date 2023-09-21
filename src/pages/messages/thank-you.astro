@@ -1,0 +1,35 @@
+---
+import Comment from "@/components/Comment.astro";
+import Base from "@/layouts/Base.astro";
+import { app } from "../../firebase/server";
+
+import { getFirestore  } from "firebase-admin/firestore";
+
+
+type Message = {name:string, message:string}
+
+
+const db = getFirestore(app);
+const docRef = await db.collection('messages').where("public","==", true).get()
+const messages:Message[] = []
+
+docRef.forEach(doc=>messages.push(doc.data()))
+
+---
+
+<Base>
+    <section class="section pt-14">
+        <div class="container">
+          <div class="row justify-center">
+            <div class="mb-16 text-center lg:col-7">
+                <h1>Gracias por darnos amor 💙</h1>
+
+                <div id="public-comments" class="mt-5"/>
+                  {messages.map(message=>(<Comment name={message.name} message={message.message}/>))}
+            </div>
+          </div>
+        </div>
+    </div>
+    </section>
+
+</Base>

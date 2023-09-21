@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ params, redirect, request }) => {
     await guestsRef.doc().set({
      name,
      message,
-     public:_public || false
+     public:_public === 'on' ? true : false
     });
   } catch (error) {
     console.error(error)
@@ -22,6 +22,6 @@ export const POST: APIRoute = async ({ params, redirect, request }) => {
       status: 500,
     });
   }
-  return redirect("/messages");
+  return redirect("/messages/thank-you");
 };
 
