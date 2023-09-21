@@ -1,5 +1,25 @@
 ---
+import Comment from "@/components/Comment.astro";
 import Base from "@/layouts/Base.astro";
+import { app } from "../firebase/server";
+
+import { getFirestore  } from "firebase-admin/firestore";
+
+
+type Message = {name:string, message:string}
+
+const {nombre} = Astro.params
+if (!nombre) {
+    return {
+        status: 404,
+        error: new Error("No se encontró el invitado"),
+    };
+}
+const db = getFirestore(app);
+const docRef = await db.collection('messages').where("public","==", true).get()
+const messages:Message[] = []
+
+docRef.forEach(doc=>messages.push(doc.data()))
 
 ---
 
@@ -26,9 +46,9 @@ import Base from "@/layouts/Base.astro";
                           <div class="col-span-full">
                             <label for="about" class="block text-sm font-medium leading-6 text-gray-900">Mensaje</label>
                             <div class="mt-2">
-                              <textarea id="about" name="message" rows="3" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
+                              <textarea id="about" name="message" rows="3" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 bg-transparent placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
                             </div>
-                            <p class="mt-3 text-sm leading-6 text-gray-600">Escribi unas palabras para nosotros.</p>
+                            <p class="mt-3 text-sm leading-6 text-gray-600 dark:text-white">Escribi unas palabras para nosotros.</p>
                           </div>
                           
                           <div class="col-span-full">
@@ -39,7 +59,7 @@ import Base from "@/layouts/Base.astro";
                      </div>
                     </div>
                 </form>
-                  
+                  {messages.map(message=>(<Comment name={message.name} message={message.message}/>))}
             </div>
         </div>
     </div>
