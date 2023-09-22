@@ -31,7 +31,7 @@ console.log(process.cwd())
 const db = getFirestore(app);
 const guestsRef = db.collection("guests");
 
-fs.readFile('invitados.csv', function (err, data) {
+fs.readFile('invitados.csv','latin1', function (err, data) {
 
     if (err) {
         return console.log(err);
@@ -56,7 +56,7 @@ fs.readFile('invitados.csv', function (err, data) {
         guestsRef.doc(obj.name).set(obj);
         jsonObj.push(obj);
       }
-      console.log(jsonObj);
+      console.log(JSON.stringify(jsonObj));
       
     
 });
