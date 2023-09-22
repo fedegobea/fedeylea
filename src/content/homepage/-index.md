@@ -3,7 +3,7 @@
 banner:
   title: "Santa Marta, 16 de diciembre!"
   content: "Te esperamos en Santa Catalina del mar"
-  image: "/images/banner.png"
+  image: "/images/banner"
   button:
     enable: true
     label: "Como llegar"
