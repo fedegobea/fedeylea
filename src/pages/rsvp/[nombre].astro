@@ -52,7 +52,7 @@ const {guests, confirmed, maxGuests} = docRef.data()
             :<div class="mb-16 text-center lg:col-7">
                 <h1>Confirma tu asistencía</h1>
                <h2>{nombre} </h2>
-               {maxGuests ? <GuestNumber maxGuests={maxGuests} guests={guests} client:load/> : null}
+               {maxGuests && maxGuests > 0 ? <GuestNumber maxGuests={maxGuests} guests={guests} client:load/> : null}
                
                <div class="col-span-full mt-5">
                     <form method="post" action={`/api/guests/${nombre}`} >

@@ -2,7 +2,7 @@ import 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 
 export default function GuestNumber({maxGuests, guests}) {
-    const [currentGuests, setCurrentGuests] = useState(guests)
+    const [currentGuests, setCurrentGuests] = useState(guests || maxGuests)
     const inputRef = useRef(null)
     const handleSetGuests = (e)=>{
         const val = parseInt(e.target.value) 
