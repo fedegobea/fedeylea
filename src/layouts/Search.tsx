@@ -1,60 +1,43 @@
-import config from "@/config/config.json";
-import { humanize, plainify, slugify } from "@/lib/utils/textConverter";
-import Fuse from "fuse.js";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   FaRegFolder,
   FaRegUserCircle,
   FaSearch,
 } from "react-icons/fa/index.js";
-
-const { summary_length, blog_folder } = config.settings;
+import RSVPSearchListItem from "./components/RSVPSearchListItem";
+import {db } from "../firebase/client";
+import { collection, endAt, getDocs, orderBy, query, startAt, where } from "firebase/firestore";
 
 export type SearchItem = {
-  slug: string;
-  data: any;
-  content: any;
+  name: string;
 };
 
-interface Props {
-  searchList: SearchItem[];
-}
 
-interface SearchResult {
-  item: SearchItem;
-  refIndex: number;
-}
+const searchInFirebase = async (inputVal: string) => {
 
-const Search = ({ searchList }: Props) => {
+    const guestsRef = collection(db, "guests");
+
+    // Create a query against the collection.
+    const q = query(guestsRef, orderBy("name"), startAt(inputVal), endAt(inputVal + "\uf8ff"));
+    const guests:SearchItem[] = []
+    const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        guests.push(doc.data() as SearchItem);
+    });
+    console.log(guests);
+    return guests;
+
+};
+
+const Search = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [inputVal, setInputVal] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
 
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setInputVal(e.currentTarget.value);
-  };
-
-  const fuse = new Fuse(searchList, {
-    keys: ["data.title", "data.categories", "data.tags"],
-    includeMatches: true,
-    minMatchCharLength: 3,
-    threshold: 0.5,
-  });
-
-  useEffect(() => {
-    const searchUrl = new URLSearchParams(window.location.search);
-    const searchStr = searchUrl.get("q");
-    if (searchStr) setInputVal(searchStr);
-
-    setTimeout(function () {
-      inputRef.current!.selectionStart = inputRef.current!.selectionEnd =
-        searchStr?.length || 0;
-    }, 50);
-  }, []);
-
-  useEffect(() => {
-    let inputResult = inputVal.length > 2 ? fuse.search(inputVal) : [];
-    setSearchResults(inputResult);
+  const onClickSearch = () => {
+    const inputVal = inputRef.current!.value;
+    
+    searchInFirebase(inputVal).then(inputResult =>setSearchResults(inputResult));
+    
 
     if (inputVal.length > 0) {
       const searchParams = new URLSearchParams(window.location.search);
@@ -65,114 +48,32 @@ const Search = ({ searchList }: Props) => {
     } else {
       history.pushState(null, "", window.location.pathname);
     }
-  }, [inputVal]);
+  }
 
   return (
-    <section className="section-sm">
-      <div className="container">
-        <div className="row mb-10 justify-center">
-          <div className="lg:col-8">
-            <div className="flex flex-nowrap">
-              <input
-                className="form-input rounded-r-none"
-                placeholder="Search posts"
-                type="search"
-                name="search"
-                value={inputVal}
-                onChange={handleChange}
-                autoComplete="off"
-                autoFocus
-                ref={inputRef}
-              />
-              <button className="btn btn-primary rounded-l-none" type="submit">
-                <FaSearch />
-              </button>
-            </div>
-          </div>
-        </div>
+    <section>
 
-        {/* {inputVal.length > 1 && (
-          <div className="mt-8">
-            Found {searchResults?.length}
-            {searchResults?.length && searchResults?.length === 1
-              ? " result"
-              : " results"}{" "}
-            for '{inputVal}'
-          </div>
-        )} */}
-        <div className="row">
-          {searchResults?.length < 1 ? (
-            <div className="mx-auto pt-5 text-center">
-              <img
-                className="mx-auto mb-6"
-                src="/images/no-search-found.png"
-                alt="no-search-found"
-              />
-              <h1 className="h2 mb-4">
-                {inputVal.length < 1 ? "Search Post Here" : "No Search Found!"}
-              </h1>
-              <p>
-                {inputVal.length < 1
-                  ? "Search for posts by title, category, or tag."
-                  : "We couldn't find what you searched for. Try searching again."}
-              </p>
-            </div>
-          ) : (
-            searchResults?.map(({ item }, index) => (
-              <div className="mb-12 md:col-6 lg:col-4" key={`search-${index}`}>
-                <div className="bg-body dark:bg-darkmode-body">
-                  {item.data.image && (
-                    <img
-                      className="mb-6 w-full rounded"
-                      src={item.data.image}
-                      alt={item.data.title}
-                      width={445}
-                      height={230}
-                    />
-                  )}
-                  <h4 className="mb-3">
-                    <a href={`/${blog_folder}/${item.slug}`}>
-                      {item.data.title}
-                    </a>
-                  </h4>
-                  <ul className="mb-4">
-                    <li className="mr-4 inline-block">
-                      <a href={`/authors/${slugify(item.data.author)}`}>
-                        <FaRegUserCircle
-                          className={"-mt-1 mr-2 inline-block"}
-                        />
-                        {humanize(item.data.author)}
-                      </a>
-                    </li>
-                    <li className="mr-4 inline-block">
-                      <FaRegFolder className={"-mt-1 mr-2 inline-block"} />
-                      {item.data.categories.map(
-                        (category: string, index: number) => (
-                          <a
-                            href={`/categories/${slugify(category)}`}
-                            key={category}
-                          >
-                            {humanize(category)}
-                            {index !== item.data.categories.length - 1 && ", "}
-                          </a>
-                        ),
-                      )}
-                    </li>
-                  </ul>
-                  <p className="mb-6">
-                    {plainify(item.content?.slice(0, Number(summary_length)))}
-                  </p>
-                  <a
-                    className="btn btn-outline-primary btn-sm"
-                    href={`/${blog_folder}/${item.slug}`}
-                  >
-                    read more
-                  </a>
+      <div className="space-y-12">
+        <div className="border-b border-gray-900/10 pb-12">
+          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="col-span-full">
+              <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">Busca tu nombre o apellido</label>
+              <div className="mt-2 w-full">
+                <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                  <input type="text" ref={inputRef} name="name" id="name" autoComplete="name" className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 dark:text-white focus:ring-0 sm:text-sm sm:leading-6" placeholder="Federico " />
                 </div>
               </div>
-            ))
-          )}
+            </div>
+            <div className="col-span-full">
+              <button type="button" onClick={onClickSearch} className="btn btn-primary">Buscarme con mi nombre</button>
+            </div>
+          </div>
         </div>
+      </div>
+      <div className="flex flex-col container  mt-10 mx-auto w-full items-center justify-center bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 rounded border border-gray-400	">
+        <ul className="flex flex-col divide-y w-full">
+          {searchResults.map((result) => (<RSVPSearchListItem name={result.name} />))}
+        </ul>
       </div>
     </section>
   );
