@@ -7,7 +7,7 @@ type RSVPSearchListItemProps = {
 
 export default ({name}:RSVPSearchListItemProps) => (
     <a href={`/rsvp/${name}`} >
-    <li className="flex flex-row ">
+    <li className="flex flex-row hover:bg-gray-50 dark:hover:bg-gray-900">
       <div className="select-none cursor-pointer flex flex-1 items-center p-4">
        
         <div className="flex-1 pl-1">

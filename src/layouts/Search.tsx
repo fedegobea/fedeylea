@@ -7,11 +7,21 @@ import {
 import RSVPSearchListItem from "./components/RSVPSearchListItem";
 import {db } from "../firebase/client";
 import { collection, endAt, getDocs, orderBy, query, startAt, where } from "firebase/firestore";
+import algoliasearch from 'algoliasearch/lite';
+import { Hits, InstantSearch, SearchBox } from 'react-instantsearch';
+
+const searchClient = algoliasearch('PWC1UG4KWI', 'e5b5400e6f6b4fc1c7f1a4f69de9d86d');
+const index = searchClient.initIndex('guests');
 
 export type SearchItem = {
   name: string;
 };
 
+const searchInAlgolia = async (inputVal: string) => {
+  const searchResults = await index.search(inputVal);
+  console.log(searchResults);
+  return searchResults.hits as SearchItem[];
+}
 
 const searchInFirebase = async (inputVal: string) => {
 
@@ -36,7 +46,7 @@ const Search = () => {
   const onClickSearch = () => {
     const inputVal = inputRef.current!.value;
     
-    searchInFirebase(inputVal).then(inputResult =>setSearchResults(inputResult));
+    searchInAlgolia(inputVal).then(inputResult =>setSearchResults(inputResult));
     
 
     if (inputVal.length > 0) {
@@ -70,11 +80,12 @@ const Search = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col container  mt-10 mx-auto w-full items-center justify-center bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 rounded border border-gray-400	">
-        <ul className="flex flex-col divide-y w-full">
+      <div className="flex flex-col   mt-10 mx-auto w-full items-center justify-center bg-white dark:bg-gray-800  rounded border border-gray-400	">
+        <ul className="flex flex-col divide-y w-full p-0">
           {searchResults.map((result) => (<RSVPSearchListItem name={result.name} />))}
         </ul>
       </div>
+    
     </section>
   );
 };
