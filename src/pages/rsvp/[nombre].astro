@@ -50,7 +50,7 @@ const {guests, confirmed, maxGuests} = docRef.data()
                 </form>
                 </div>
             :<div class="mb-16 text-center lg:col-7">
-                <h1>Confirma tu asistencía</h1>
+                <h1>Confirma tu asistencia</h1>
                <h2>{nombre} </h2>
                {maxGuests && maxGuests > 0 ? <GuestNumber maxGuests={maxGuests} guests={guests} client:load/> : null}
                

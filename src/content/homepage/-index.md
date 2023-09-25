@@ -13,14 +13,14 @@ banner:
 features:
   - title: "Bienvenidos a nuestro matrimonio"
     image: "/images/fedeylea.jpg"
-    content: 'Nos hace infinitamente felices compartir éste momento especial con ustedes, que han hecho parte fundamental de nuestra historia de vida.
+    content: 'Nos hace infinitamente felices compartir éste momento especial contigo, que eres parte fundamental de nuestra historia de vida.
 <br/>
 <br/>
 Mientras llega el gran día hemos creado esta web para que estés al tanto de todo y para compartir nuestra historia de amor.
 <br/>
 <br/>
 
-En la sección "Confirma tu asistencia" puedes confirmar si tendremos el placer de contar con tu compañía. Tu confirmación temprana nos permitirá afinar detalles para que pases junto a nosotros ésta fecha memorable.
+En la sección "Confirma tu asistencia" puedes confirmar si tendremos el placer de contar con tu compañía. Tu confirmación temprana nos permitirá afinar detalles para que juntos pasemos una fecha memorable.
 <br/>
 <br/>
 
