@@ -21,5 +21,5 @@ export default function GuestNumber({maxGuests, guests}) {
           });
           inputRef.current.dispatchEvent(changeGuests);
     },[currentGuests])
-    return <h4>Cupos <input ref={inputRef} className='[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none appearance-none border rounded w-11 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' value={currentGuests} type="number" onChange={handleSetGuests}/> / {maxGuests}</h4>
+    return <h4>Vamos <input ref={inputRef} className='[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none appearance-none border rounded w-11 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' value={currentGuests} type="number" onChange={handleSetGuests}/> / {maxGuests} Persona{`${maxGuests > 1 ? "s" : ""}`}</h4>
 }
