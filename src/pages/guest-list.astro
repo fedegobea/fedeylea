@@ -1,0 +1,53 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "@/layouts/Base.astro";
+import GuestNumber from "@/layouts/components/Guest.jsx";
+import { app } from "../firebase/server";
+
+import { getFirestore  } from "firebase-admin/firestore";
+
+
+
+
+const {nombre} = Astro.params
+
+const db = getFirestore(app);
+const docRef = await db.collection('guests').get()
+const guests = []
+docRef.forEach((doc) => {
+    guests.push(doc.data())
+})
+
+
+
+---
+
+<Base>
+    <section class="section pt-14">
+        <div class="container">
+          <div class="row justify-center">
+            
+            <div class="mb-16 text-center lg:col-7">
+                <table class="table-auto">
+                    <thead>
+                        <tr>
+                          <th>Nombre</th>
+                          <th>Cupos</th>
+                          <th>Confirmados</th>
+                          <th>Esta confirmado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                    {guests.map(guest=><tr>
+                        <td>{guest.name}</td>
+                        <td>{guest.maxGuests}</td>
+                        <td>{guest.guests}</td>
+                        <td>{guest.confirmed}</td>
+                        </tr>)}
+                      </tbody>
+                    </table>
+            </div>
+          </div>
+        </div>
+    </section>
+</Base>
